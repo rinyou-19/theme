@@ -38,7 +38,7 @@ export const Query: FC = memo(() => {
         </CardHeader>
         <CardBody p={2}>
           <Flex justify='left'>
-            <RadioButton selectedItems={selectedItems}/>     
+            <RadioButton radioButtonItems={selectedItems}/>     
             <PrimaryButton title="表示" onClick={onClickSearchButton}/>
           </Flex>
         </CardBody>

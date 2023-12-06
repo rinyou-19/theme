@@ -5,28 +5,24 @@ import { Radio
        , RadioGroup
 } from '@chakra-ui/react';
 
-import { useTodo } from '../../hooks/useTodo';
-
-type buttonElement = {
+type radioButtonElement = {
   id: number;
   title: string;
 }
 
 type Props = {
-  selectedItems: Array<buttonElement>
+  radioButtonItems: Array<radioButtonElement>
 }
 
 export const RadioButton: FC<Props> = memo((props: Props) => {
   // ラジオボタンのvalue
-  const { selectedItems } = props;
-  // Todo検索条件
-  const { todoStatus, setTodoStatus } = useTodo();
+  const { radioButtonItems } = props;
 
   return (
     <>
-      <RadioGroup mr={4} p={2} defaultValue={selectedItems[0].title}>
-        {selectedItems.map((item) => (
-          <Radio key={item.id} value={item.title}>{item.title}</Radio>
+      <RadioGroup mr={4} p={2} defaultValue={radioButtonItems[0].title}>
+        {radioButtonItems.map((radioButtonItem) => (
+          <Radio key={radioButtonItem.id} value={radioButtonItem.title}>{radioButtonItem.title}</Radio>
         ))}
       </RadioGroup>
     </>
