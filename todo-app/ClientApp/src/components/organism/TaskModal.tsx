@@ -57,8 +57,6 @@ export const TaskModal: FC<Props> = memo((props: Props) => {
       setexpectedEndOfDate(selectedTodo.expectedEndOfDate as string);
       setendOfDate(selectedTodo.expectedEndOfDate as string);
     }
-    console.log("selectedTodo")
-    console.log(selectedTodo)
   }, [selectedTodo])
 
 
@@ -67,79 +65,84 @@ export const TaskModal: FC<Props> = memo((props: Props) => {
   const onExpectedEndOfDate = (e: ChangeEvent<HTMLInputElement>) => setexpectedEndOfDate(e.target.value);
   const onEndOfDate = (e: ChangeEvent<HTMLInputElement>) => setendOfDate(e.target.value);
 
-  // ボタンのクリックイベント
-  const onClickTodoButton = () => {
-    // const todoItem: TodoItem = {
-    //   Contents: selectedTodo?.contents as string,
-    //   ExpectedEndOfDate: selectedTodo?.expectedEndOfDate as string,
-    //   EndOfDate: selectedTodo?.endOfDate as string,
-    // }
-    // console.log(todoItem);
-    if (contents === '') {
-      alert('Todoを入力してください。');
-      return;
-    }
-    if (expectedEndOfDate === '') {
-      alert('完了予定日を入力してください。');
-      return;
-    }
+  // 登録ボタンのクリックイベント
+  const onClickCreateButton = () => {
+
     // 入力値のチェック
+    const checkErrorMessages = checkInputItem();
+
+    if (checkErrorMessages !== "") {
+      // チェック処理に問題がある場合
+      alert(checkErrorMessages);
+      return;
+    }
+
     const todoItem: TodoItem = {
       Contents: contents,
       ExpectedEndOfDate: expectedEndOfDate,
-      // 値を設定しなくてもいい方法を探す
-      EndOfDate: expectedEndOfDate,
+      EndOfDate: null,
     }
 
-    axios.post("/api/TodoItems", todoItem).then((res: any) => {
+    axios.post("/api/TodoItems", todoItem).then((res) => {
        alert('登録しました。');
        setContents('');
        setexpectedEndOfDate('');
        setendOfDate('');
-    }).catch((error: any) => {
-       console.log(error);
+    }).catch((error) => {
+      alert('失敗しました');
     });
   }
 
   // 削除ボタンのクリックイベント
   const onClickDeleteButton = () => {
 
-    axios.delete(`/api/TodoItems/${selectedTodo!.id}`).then((res: any) => {
+    axios.delete(`/api/TodoItems/${selectedTodo!.id}`).then((res) => {
       alert('削除しました。');
       setContents('');
       setexpectedEndOfDate('');
       setendOfDate('');
-    }).catch((error: any) => {
-         console.log(error);
+    }).catch((error) => {
     });
+  }
+
+  // 項目のチェック処理
+  const checkInputItem = () => {
+    // 内容のチェック
+    if (contents === '') {
+      return "Todoを入力してください";
+    }
+    // 完了予定日のチェック
+    if (expectedEndOfDate === '') {
+      return "完了予定日を入力してください";
+    }
+    // チェック処理に問題がない場合
+    return "";
   }
 
   // 更新ボタンのクリックイベント
   const onClickUpdateButton = () => {
     // 入力値のチェック
-    if (contents === '') {
-      alert('Todoを入力してください。');
+    const checkErrorMessages = checkInputItem();
+
+    if (checkErrorMessages !== "") {
+      // チェック処理に問題がある場合
+      alert(checkErrorMessages);
       return;
     }
-    if (expectedEndOfDate === '') {
-      alert('完了予定日を入力してください。');
-      return;
-    }
-    // 入力値のチェック
+
     const todoItem: TodoItem = {
+      id: selectedTodo!.id,
       Contents: contents,
       ExpectedEndOfDate: expectedEndOfDate,
-      // 値を設定しなくてもいい方法を探す
-      EndOfDate: expectedEndOfDate,
+      EndOfDate: endOfDate,
     }
       
-    axios.put(`/api/TodoItems/${selectedTodo!.id}`, todoItem).then((res: any) => {
+    axios.put(`/api/TodoItems/${selectedTodo!.id}`, todoItem).then((res) => {
       alert('登録しました。');
       setContents('');
       setexpectedEndOfDate('');
       setendOfDate('');
-    }).catch((error: any) => {
-      console.log(error);
+    }).catch((error) => {
     });
   }
 
@@ -175,7 +178,7 @@ export const TaskModal: FC<Props> = memo((props: Props) => {
             </Button>
             <Button variant='ghost' onClick={onClickDeleteButton}>削除</Button>
             <Button variant='ghost' onClick={onClickUpdateButton}>更新</Button>
-            <Button variant='ghost' onClick={onClickTodoButton}>新規作成</Button>
+            <Button variant='ghost' onClick={onClickCreateButton}>作成</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

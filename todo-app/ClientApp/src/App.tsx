@@ -1,6 +1,6 @@
 import { ChakraProvider } from '@chakra-ui/react';
-import { useDisclosure
-} from '@chakra-ui/react';
+import { useDisclosure} from '@chakra-ui/react';
+import { useState } from 'react';
 
 import { TodoProvider } from './providers/TodoProvider';
 import { Header } from './components/organism/Header';
@@ -13,8 +13,7 @@ export const App = () => {
   // Todo一覧のヘッダー項目
   const headerItems = ['id', '内容', '完了予定日', '完了日', ''];
   // Todo一覧のデータ
-  // const todoItems = ['1', "テスト", "2021/01/01", "2021/01/01", "true"]
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
     <>

@@ -8,14 +8,8 @@ export const useSelectTodos  = () => {
 
   const { setToDos } = useTodo();
 
-  // const getTodos = useCallback(() => {
-  //   axios.get('api/todoitems').then((res) => {
-  //     // 取得したデータをセット
-  //     setToDos(res.data);
-  //   });
-  // }, [setToDos])
-  const getAllTodos = () => {
-    axios.get('api/todoitems').then((res) => {
+  const getAllTodos = (a: any) => {
+    axios.get('api/todoitems', {params: {a:a}}).then((res) => {
       console.log(res.data);
       // 取得したデータをセット
       setToDos(res.data);

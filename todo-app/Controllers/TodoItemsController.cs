@@ -20,37 +20,48 @@ namespace todo_app.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TodoItem>>> GetTodo()
+        public async Task<ActionResult<IEnumerable<TodoItem>>> GetTodo(string a)
         {
-            if (_context.TodoItem == null)
+            if (a == "未完了")
+            {
+                return await _context.TodoItem.Where(x => x.EndOfDate == null).ToListAsync();
+            }
+            if (a == "完了済み")
+            {
+                return await _context.TodoItem.Where(x => x.EndOfDate != null).ToListAsync();
+            }
+            return await _context.TodoItem.ToListAsync();
+            
+        }
+
+       // GET: api/TodoItems/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<TodoItem>> GetTodoItem(int id)
+        {
+            var todoItem = await _context.TodoItem.FindAsync(id);
+
+            if (todoItem == null)
             {
                 return NotFound();
             }
-            try
-            {
-                var test = await _context.TodoItem.ToListAsync();
-            }
-            catch (Exception e)
-            {
-                var test2 = "あ";
-            }
-            return await _context.TodoItem.ToListAsync();
+
+            return todoItem;
         }
 
         [HttpPost]
-        // public async Task<ActionResult<TodoItem>> PostTodo(TodoItem todo)
-        public string PostTodo(TodoItem todo)
+        public void PostTodo(TodoItem todo)
         {
             _context.TodoItem.Add(todo);
             _context.SaveChangesAsync();
-
-            return "ok";
         }
 
-        // PUT: api/TodoItems/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutTodoItem(int id, TodoItem todoItem)
         {
+            if (id != todoItem.Id)
+            {
+                return BadRequest();
+            }
 
             _context.Entry(todoItem).State = EntityState.Modified;
 
@@ -73,7 +84,6 @@ namespace todo_app.Controllers
             return NoContent();
         }
 
-        // DELETE: api/TodoItems/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTodoItem(int id)
         {

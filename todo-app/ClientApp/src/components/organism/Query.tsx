@@ -1,5 +1,6 @@
 import { FC
        , memo
+       , useState
 } from 'react';
 import { Card
        , CardBody
@@ -25,10 +26,16 @@ export const Query: FC = memo(() => {
   const selectedItems = [ { id: 11, title: 'すべて' }
                         , { id: 12, title: '未完了' }
                         , { id: 13, title: '完了済み' }];
+  // 検索条件の選択状態
+  const [selectedOption, setSelectedOption] = useState('すべて');
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedOption(event.target.value);
+  }
 
   const onClickSearchButton = () => {
     // データ取得
-    getAllTodos();
+    getAllTodos(selectedOption);
   }
   return (
     <>
@@ -38,7 +45,7 @@ export const Query: FC = memo(() => {
         </CardHeader>
         <CardBody p={2}>
           <Flex justify='left'>
-            <RadioButton radioButtonItems={selectedItems}/>     
+            <RadioButton radioButtonItems={selectedItems}selectedOption={selectedOption} onChange={handleChange}/>     
             <PrimaryButton title="表示" onClick={onClickSearchButton}/>
           </Flex>
         </CardBody>

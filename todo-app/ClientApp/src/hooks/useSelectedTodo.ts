@@ -18,8 +18,6 @@ export const useSelectedTodo = () => {
     const { id, toDos } = props;
     if (toDos === null) return;
     const tageetTodo = toDos.find((todo) => todo.id === id);
-    console.log("tageetTodo")
-    console.log(tageetTodo)
     // !の使い方は要件等
     setSelectedTodo(tageetTodo!);
   }, []);
