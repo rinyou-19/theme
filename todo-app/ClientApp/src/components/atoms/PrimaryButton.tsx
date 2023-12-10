@@ -4,13 +4,11 @@ import { Button } from '@chakra-ui/react';
 type Props = {
   title: string;
   onClick: () => void;
-}
+};
 
 // ボタンのコンポーネント
 // ボタンのタイトルとクリック時の処理を受け取る
 export const PrimaryButton: FC<Props> = memo((props) => {
   const { title, onClick } = props;
-  return (
-    <Button onClick={onClick}>{title}</Button>
-  );
+  return <Button onClick={onClick}>{title}</Button>;
 });
