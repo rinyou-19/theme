@@ -6,12 +6,14 @@ import { useTodo } from './useTodo';
 export const useSelectTodos = () => {
   const { setToDos } = useTodo();
 
-  const getAllTodos = (a: any) => {
-    axios.get('api/todoitems', { params: { a: a } }).then((res) => {
-      // 取得したデータをセット
-      setToDos(res.data);
-    });
+  const getToDos = (selectedOption: string) => {
+    axios
+      .get('api/todoitems', { params: { selectedOption: selectedOption } })
+      .then((res) => {
+        // 取得したデータをセット
+        setToDos(res.data);
+      });
   };
 
-  return { getAllTodos };
+  return { getToDos };
 };

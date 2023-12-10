@@ -12,7 +12,7 @@ type Props = {
 
 export const Query: FC<Props> = memo((props: Props) => {
   const { selectedOption, setSelectedOption } = props;
-  const { getAllTodos } = useSelectTodos();
+  const { getToDos } = useSelectTodos();
   // 検索条件の項目
   const selectedItems = [
     { id: 11, title: 'すべて' },
@@ -26,7 +26,7 @@ export const Query: FC<Props> = memo((props: Props) => {
 
   const onClickSearchButton = () => {
     // データ取得
-    getAllTodos(selectedOption);
+    getToDos(selectedOption);
   };
 
   return (

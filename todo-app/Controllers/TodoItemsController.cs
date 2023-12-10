@@ -13,6 +13,8 @@ namespace todo_app.Controllers
     public class TodoItemsController : ControllerBase
     {
         private readonly TodoContext _context;
+        private const string unConpleted = "未完了";
+        private const string conpleted = "未完了";
 
         public TodoItemsController(TodoContext context)
         {
@@ -20,39 +22,40 @@ namespace todo_app.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TodoItem>>> GetTodo(string a)
+        public async Task<ActionResult<IEnumerable<TodoItem>>> GetTodo(string selectedOption)
         {
-            if (a == "未完了")
+            if (selectedOption == unConpleted)
             {
                 return await _context.TodoItem.Where(x => x.EndOfDate == null).ToListAsync();
             }
-            if (a == "完了済み")
+            if (selectedOption == conpleted)
             {
                 return await _context.TodoItem.Where(x => x.EndOfDate != null).ToListAsync();
             }
             return await _context.TodoItem.ToListAsync();
-            
-        }
 
-       // GET: api/TodoItems/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<TodoItem>> GetTodoItem(int id)
-        {
-            var todoItem = await _context.TodoItem.FindAsync(id);
-
-            if (todoItem == null)
-            {
-                return NotFound();
-            }
-
-            return todoItem;
         }
 
         [HttpPost]
-        public void PostTodo(TodoItem todo)
+        public async Task<IActionResult> PostTodo(TodoItem todo)
         {
-            _context.TodoItem.Add(todo);
-            _context.SaveChangesAsync();
+            using (var transaction = _context.Database.BeginTransaction())
+            {
+                try
+                {
+                    _context.TodoItem.Add(todo);
+                    await _context.SaveChangesAsync();
+
+                    transaction.Commit();
+
+                    return Ok(); // 成功時のステータスコード
+                }
+                catch (Exception)
+                {
+                    transaction.Rollback();
+                    return StatusCode(StatusCodes.Status500InternalServerError);
+                }
+            }
         }
 
         [HttpPut("{id}")]
@@ -65,23 +68,22 @@ namespace todo_app.Controllers
 
             _context.Entry(todoItem).State = EntityState.Modified;
 
-            try
+            using (var transaction = _context.Database.BeginTransaction())
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!TodoItemExists(id))
+                try
                 {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+                    await _context.SaveChangesAsync();
 
-            return NoContent();
+                    transaction.Commit();
+
+                    return Ok(); // 成功時のステータスコード
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    transaction.Rollback();
+                    return StatusCode(StatusCodes.Status500InternalServerError);
+                }
+            }
         }
 
         [HttpDelete("{id}")]
@@ -93,10 +95,21 @@ namespace todo_app.Controllers
                 return NotFound();
             }
 
-            _context.TodoItem.Remove(todoItem);
+            using (var transaction = _context.Database.BeginTransaction())
+            {
+                try
+                {
+                    _context.TodoItem.Remove(todoItem);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+                    return Ok(); // 成功時のステータスコード
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    transaction.Rollback();
+                    return StatusCode(StatusCodes.Status500InternalServerError);
+                }
+            }
         }
 
         private bool TodoItemExists(int id)

@@ -13,6 +13,7 @@ export const Footer: FC<Props> = memo((props: Props) => {
   const { onOpen } = props;
   const { setUpdateFlag } = useTodo();
 
+  // 新規作成ボタン押下時の処理
   const onClickButton = () => {
     setUpdateFlag(false);
     onOpen();

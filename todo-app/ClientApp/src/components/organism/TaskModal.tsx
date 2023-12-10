@@ -14,12 +14,14 @@ import {
   ModalCloseButton,
   Stack,
   Textarea,
+  useDisclosure,
 } from '@chakra-ui/react';
 
 import axios from 'axios';
 
 import { useTodo } from '../../hooks/useTodo';
 import { useSelectTodos } from '../../hooks/useSelectTodos';
+import { ConfirmModal } from './ConfirmModal';
 
 type Props = {
   isOpen: boolean;
@@ -38,10 +40,12 @@ type TodoItem = {
 export const TaskModal: FC<Props> = memo((props: Props) => {
   const { isOpen, onClose, selectedOption } = props;
   const { updateFlag } = useTodo();
+  const { isOpen: isConfrimModalOpen, onOpen: onConfrimModalOpen, onClose: onConfrimModalClose } = useDisclosure();
+  const [message, setMessage] = useState<string>('');
 
   // 選択されたTodo
   const { selectedTodo } = useTodo();
-  const { getAllTodos } = useSelectTodos();
+  const { getToDos } = useSelectTodos();
 
   // 入力値のstate
   const [contents, setContents] = useState<string>('');
@@ -72,7 +76,8 @@ export const TaskModal: FC<Props> = memo((props: Props) => {
 
     if (checkErrorMessages !== '') {
       // チェック処理に問題がある場合
-      alert(checkErrorMessages);
+      setMessage(checkErrorMessages);
+      onConfrimModalOpen();
       return;
     }
 
@@ -85,14 +90,17 @@ export const TaskModal: FC<Props> = memo((props: Props) => {
     axios
       .post('/api/TodoItems', todoItem)
       .then((res) => {
-        alert('登録しました。');
+        setMessage('登録しました。');
+        onConfrimModalOpen();
         initInputItems();
         onClose();
         // データ取得
-        getAllTodos(selectedOption);
+        getToDos(selectedOption);
+        console.log(res);
       })
-      .catch((error) => {
-        alert('失敗しました');
+      .catch(() => {
+        setMessage('登録できませんでした。');
+        onConfrimModalOpen();
       });
   };
 
@@ -100,14 +108,18 @@ export const TaskModal: FC<Props> = memo((props: Props) => {
   const onClickDeleteButton = () => {
     axios
       .delete(`/api/TodoItems/${selectedTodo!.id}`)
-      .then((res) => {
-        alert('削除しました。');
+      .then(() => {
+        setMessage('削除しました。');
+        onConfrimModalOpen();
         initInputItems();
         onClose();
         // データ取得
-        getAllTodos(selectedOption);
+        getToDos(selectedOption);
       })
-      .catch((error) => {});
+      .catch(() => {
+        setMessage('削除できませんでした。');
+        onConfrimModalOpen();
+      });
   };
 
   // 項目のチェック処理
@@ -131,7 +143,8 @@ export const TaskModal: FC<Props> = memo((props: Props) => {
 
     if (checkErrorMessages !== '') {
       // チェック処理に問題がある場合
-      alert(checkErrorMessages);
+      setMessage(checkErrorMessages);
+      onConfrimModalOpen();
       return;
     }
 
@@ -144,14 +157,18 @@ export const TaskModal: FC<Props> = memo((props: Props) => {
 
     axios
       .put(`/api/TodoItems/${selectedTodo!.id}`, todoItem)
-      .then((res) => {
-        alert('登録しました。');
+      .then(() => {
+        setMessage('更新しました。');
+        onConfrimModalOpen();
         initInputItems();
         onClose();
         // データ取得
-        getAllTodos(selectedOption);
+        getToDos(selectedOption);
       })
-      .catch((error) => {});
+      .catch(() => {
+        setMessage('更新できませんでした。');
+        onConfrimModalOpen();
+      });
   };
 
   // 入力項目初期化
@@ -200,7 +217,7 @@ export const TaskModal: FC<Props> = memo((props: Props) => {
           </ModalBody>
           <ModalFooter>
             <Button colorScheme="blue" mr={3} onClick={onClose}>
-              Close
+              閉じる
             </Button>
             {updateFlag ? (
               <Button variant="ghost" onClick={onClickDeleteButton}>
@@ -226,6 +243,7 @@ export const TaskModal: FC<Props> = memo((props: Props) => {
           </ModalFooter>
         </ModalContent>
       </Modal>
+      <ConfirmModal isConfirmOpen={isConfrimModalOpen} onConfirmClose={onConfrimModalClose} message={message} />
     </>
   );
 });
