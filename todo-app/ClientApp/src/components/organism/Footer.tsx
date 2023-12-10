@@ -23,7 +23,7 @@ export const Footer: FC<Props> = memo((props: Props) => {
   }
 
   return (
-    <Flex height="50px" justify="center">
+    <Flex height="50px" alignItems="center" justifyContent="center" >
       <PrimaryButton title="新規作成" onClick={onClickButton}/>
     </Flex>
   );

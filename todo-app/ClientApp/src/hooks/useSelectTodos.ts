@@ -1,4 +1,3 @@
-import { useCallback, useState } from 'react';
 import axios from 'axios';
 
 import { useTodo } from './useTodo';
@@ -10,7 +9,6 @@ export const useSelectTodos  = () => {
 
   const getAllTodos = (a: any) => {
     axios.get('api/todoitems', {params: {a:a}}).then((res) => {
-      console.log(res.data);
       // 取得したデータをセット
       setToDos(res.data);
     });

@@ -23,11 +23,13 @@ import { Button
 import axios from 'axios';
 
 import { useTodo } from '../../hooks/useTodo';
-import { useSelectedTodo } from '../../hooks/useSelectedTodo';
+import { useSelectTodos } from '../../hooks/useSelectTodos';
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
+  selectedOption: string;
+  setSelectedOption: (selectedOption: string) => void;
 }
 
 type TodoItem = {
@@ -39,11 +41,12 @@ type TodoItem = {
 
 export const TaskModal: FC<Props> = memo((props: Props) => {
 
-  const { isOpen, onClose } = props;
+  const { isOpen, onClose, selectedOption } = props;
   const { updateFlag } = useTodo();
 
   // 選択されたTodo
-  const { selectedTodo, setSelectedToDo } = useTodo();
+  const { selectedTodo } = useTodo();
+  const { getAllTodos } = useSelectTodos();
 
   // 入力値のstate
   const [contents, setContents] = useState<string>('');
@@ -55,7 +58,7 @@ export const TaskModal: FC<Props> = memo((props: Props) => {
       // 設定されたTodoをセットする
       setContents(selectedTodo.contents);
       setexpectedEndOfDate(selectedTodo.expectedEndOfDate as string);
-      setendOfDate(selectedTodo.expectedEndOfDate as string);
+      setendOfDate(selectedTodo.endOfDate as string);
     }
   }, [selectedTodo])
 
@@ -85,9 +88,10 @@ export const TaskModal: FC<Props> = memo((props: Props) => {
 
     axios.post("/api/TodoItems", todoItem).then((res) => {
        alert('登録しました。');
-       setContents('');
-       setexpectedEndOfDate('');
-       setendOfDate('');
+       initInputItems();
+       onClose();
+       // データ取得
+       getAllTodos(selectedOption);
     }).catch((error) => {
       alert('失敗しました');
     });
@@ -98,9 +102,10 @@ export const TaskModal: FC<Props> = memo((props: Props) => {
 
     axios.delete(`/api/TodoItems/${selectedTodo!.id}`).then((res) => {
       alert('削除しました。');
-      setContents('');
-      setexpectedEndOfDate('');
-      setendOfDate('');
+      initInputItems();
+      onClose();
+      // データ取得
+      getAllTodos(selectedOption);
     }).catch((error) => {
     });
   }
@@ -139,11 +144,19 @@ export const TaskModal: FC<Props> = memo((props: Props) => {
       
     axios.put(`/api/TodoItems/${selectedTodo!.id}`, todoItem).then((res) => {
       alert('登録しました。');
-      setContents('');
-      setexpectedEndOfDate('');
-      setendOfDate('');
+      initInputItems();
+      onClose();
+      // データ取得
+      getAllTodos(selectedOption);
     }).catch((error) => {
     });
+  }
+
+  // 入力項目初期化
+  const initInputItems = () => {
+    setContents('');
+    setexpectedEndOfDate('');
+    setendOfDate('');
   }
 
   return (
@@ -151,7 +164,7 @@ export const TaskModal: FC<Props> = memo((props: Props) => {
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Modal Title</ModalHeader>
+          <ModalHeader>Todo</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <Stack spacing={4}>
@@ -173,12 +186,10 @@ export const TaskModal: FC<Props> = memo((props: Props) => {
             </Stack>
           </ModalBody>
           <ModalFooter>
-            <Button colorScheme='blue' mr={3} onClick={onClose}>
-              Close
-            </Button>
-            <Button variant='ghost' onClick={onClickDeleteButton}>削除</Button>
-            <Button variant='ghost' onClick={onClickUpdateButton}>更新</Button>
-            <Button variant='ghost' onClick={onClickCreateButton}>作成</Button>
+            <Button colorScheme='blue' mr={3} onClick={onClose}>Close</Button>
+            {updateFlag ? <Button variant='ghost' onClick={onClickDeleteButton}>削除</Button> : <></>}
+            {updateFlag ? <Button variant='ghost' onClick={onClickUpdateButton}>更新</Button> : <></>}
+            {updateFlag ? <></> : <Button variant='ghost' onClick={onClickCreateButton}>作成</Button>}
           </ModalFooter>
         </ModalContent>
       </Modal>

@@ -11,19 +11,21 @@ import { TaskModal } from './components/organism/TaskModal';
 
 export const App = () => {
   // Todo一覧のヘッダー項目
-  const headerItems = ['id', '内容', '完了予定日', '完了日', ''];
+  const headerItems = ['id', '内容', '完了予定日', '完了日'];
   // Todo一覧のデータ
   const { isOpen, onOpen, onClose } = useDisclosure();
+  // 検索条件の選択状態
+  const [selectedOption, setSelectedOption] = useState('すべて');
 
   return (
     <>
       <ChakraProvider>
         <TodoProvider>
           <Header />
-          <Query />
+          <Query selectedOption={selectedOption} setSelectedOption={setSelectedOption} />
           <DataTable headerItems={headerItems} onOpen={onOpen} />
           <Footer onOpen={onOpen} />
-          <TaskModal isOpen={isOpen} onClose={onClose} />
+          <TaskModal isOpen={isOpen} onClose={onClose} selectedOption={selectedOption} setSelectedOption={setSelectedOption} />
         </TodoProvider>
       </ChakraProvider> 
     </>
