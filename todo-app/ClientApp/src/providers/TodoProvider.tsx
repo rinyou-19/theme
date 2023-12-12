@@ -6,40 +6,40 @@ import {
   useState,
 } from 'react';
 
-import { Todo } from '../types/Todo';
+import { ToDo } from '../types/ToDo';
 
-export type TodoContextType = {
+export type ToDoContextType = {
   id: number;
-  toDos: Todo[] | null;
-  selectedTodo: Todo | null;
+  toDos: ToDo[] | null;
+  selectedToDo: ToDo | null;
   updateFlag: boolean;
-  todoStatus: number;
-  setSelectedToDo: Dispatch<SetStateAction<Todo | null>>;
-  setToDos: Dispatch<SetStateAction<Todo[] | null>>;
+  toDoStatus: number;
+  setSelectedToDo: Dispatch<SetStateAction<ToDo | null>>;
+  setToDos: Dispatch<SetStateAction<ToDo[] | null>>;
   setUpdateFlag: Dispatch<SetStateAction<boolean>>;
   setId: Dispatch<SetStateAction<number>>;
-  setTodoStatus: Dispatch<SetStateAction<number>>;
+  setToDoStatus: Dispatch<SetStateAction<number>>;
 };
 
-export const TodoContext = createContext<TodoContextType>(
-  {} as TodoContextType
+export const ToDoContext = createContext<ToDoContextType>(
+  {} as ToDoContextType
 );
 
-export const TodoProvider = (props: { children: ReactNode }) => {
+export const ToDoProvider = (props: { children: ReactNode }) => {
   const { children } = props;
-  // Todo一覧のデータ
-  const [toDos, setToDos] = useState<Todo[] | null>(null);
-  // 選択したTodo
-  const [selectedTodo, setSelectedToDo] = useState<Todo | null>(null);
-  // Todo登録・更新のフラグ
+  // ToDo一覧のデータ
+  const [toDos, setToDos] = useState<ToDo[] | null>(null);
+  // 選択したToDo
+  const [selectedToDo, setSelectedToDo] = useState<ToDo | null>(null);
+  // ToDo登録・更新のフラグ
   const [updateFlag, setUpdateFlag] = useState<boolean>(false);
-  // Todo登録・更新のID
+  // ToDo登録・更新のID
   const [id, setId] = useState<number>(0);
   // Todo検索条件
-  const [todoStatus, setTodoStatus] = useState<number>(0);
+  const [toDoStatus, setToDoStatus] = useState<number>(0);
 
   return (
-    <TodoContext.Provider
+    <ToDoContext.Provider
       value={{
         toDos,
         setToDos,
@@ -47,13 +47,13 @@ export const TodoProvider = (props: { children: ReactNode }) => {
         setUpdateFlag,
         id,
         setId,
-        todoStatus,
-        setTodoStatus,
-        selectedTodo,
+        toDoStatus,
+        setToDoStatus,
+        selectedToDo,
         setSelectedToDo,
       }}
     >
       {children}
-    </TodoContext.Provider>
+    </ToDoContext.Provider>
   );
 };

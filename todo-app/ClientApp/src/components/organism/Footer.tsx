@@ -3,15 +3,16 @@ import { FC, memo } from 'react';
 import { Flex } from '@chakra-ui/react';
 
 import { PrimaryButton } from '../atoms/PrimaryButton';
-import { useTodo } from '../../hooks/useTodo';
+import { useToDo } from '../../hooks/useToDo';
 
 type Props = {
   onOpen: () => void;
 };
 
+// フッターのコンポーネント
 export const Footer: FC<Props> = memo((props: Props) => {
   const { onOpen } = props;
-  const { setUpdateFlag } = useTodo();
+  const { setUpdateFlag } = useToDo();
 
   // 新規作成ボタン押下時の処理
   const onClickButton = () => {

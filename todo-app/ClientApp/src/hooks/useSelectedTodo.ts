@@ -1,24 +1,23 @@
 import { useCallback, useState } from 'react';
 
-import { Todo } from '../types/Todo';
+import { ToDo } from '../types/ToDo';
 
 type Props = {
   id: number;
-  toDos: Array<Todo> | null;
-  //todos: Todo;
+  toDos: Array<ToDo> | null;
 };
 
 // Todoを選択するカスタムフック
-export const useSelectedTodo = () => {
-  const [selectedTodo, setSelectedTodo] = useState<Todo | null>(null);
+export const useSelectedToDo = () => {
+  const [selectedToDo, setSelectedToDo] = useState<ToDo | null>(null);
 
-  const onSelectTodo = useCallback((props: Props) => {
+  const onSelectToDo = useCallback((props: Props) => {
     const { id, toDos } = props;
     if (toDos === null) return;
-    const tageetTodo = toDos.find((todo) => todo.id === id);
-    // !の使い方は要件等
-    setSelectedTodo(tageetTodo!);
+    const tageetToDo = toDos.find((toDo) => toDo.id === id);
+    if (tageetToDo === undefined) return;
+    setSelectedToDo(tageetToDo);
   }, []);
 
-  return { selectedTodo, onSelectTodo };
+  return { selectedToDo, onSelectToDo };
 };

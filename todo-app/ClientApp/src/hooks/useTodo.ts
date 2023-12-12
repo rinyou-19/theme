@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 
-import { TodoContext, TodoContextType } from '../providers/TodoProvider';
+import { ToDoContext, ToDoContextType } from '../providers/ToDoProvider';
 
 // TodoContextを使用するためのカスタムフック
-export const useTodo = (): TodoContextType => useContext(TodoContext);
+export const useToDo = (): ToDoContextType => useContext(ToDoContext);

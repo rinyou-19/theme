@@ -19,9 +19,10 @@ import {
 
 import axios from 'axios';
 
-import { useTodo } from '../../hooks/useTodo';
-import { useSelectTodos } from '../../hooks/useSelectTodos';
+import { useToDo } from '../../hooks/useToDo';
+import { useSelectToDos } from '../../hooks/useSelectToDos';
 import { ConfirmModal } from './ConfirmModal';
+import { PrimaryButton } from '../atoms/PrimaryButton';
 
 type Props = {
   isOpen: boolean;
@@ -37,15 +38,14 @@ type TodoItem = {
   EndOfDate: string | null;
 };
 
+// ToDoの登録・更新・削除を行うコンポーネント
 export const TaskModal: FC<Props> = memo((props: Props) => {
+
   const { isOpen, onClose, selectedOption } = props;
-  const { updateFlag } = useTodo();
+  const { updateFlag, selectedToDo } = useToDo();
   const { isOpen: isConfrimModalOpen, onOpen: onConfrimModalOpen, onClose: onConfrimModalClose } = useDisclosure();
   const [message, setMessage] = useState<string>('');
-
-  // 選択されたTodo
-  const { selectedTodo } = useTodo();
-  const { getToDos } = useSelectTodos();
+  const { getToDos } = useSelectToDos();
 
   // 入力値のstate
   const [contents, setContents] = useState<string>('');
@@ -53,13 +53,14 @@ export const TaskModal: FC<Props> = memo((props: Props) => {
   const [endOfDate, setendOfDate] = useState<string>('');
 
   useEffect(() => {
-    if (selectedTodo !== null) {
+    if (selectedToDo !== null) {
       // 設定されたTodoをセットする
-      setContents(selectedTodo.contents);
-      setexpectedEndOfDate(selectedTodo.expectedEndOfDate as string);
-      setendOfDate(selectedTodo.endOfDate as string);
+      setContents(selectedToDo.contents);
+      setexpectedEndOfDate(selectedToDo.expectedEndOfDate as string);
+      const endOfDateValue = selectedToDo.endOfDate === null ? '' : selectedToDo.endOfDate;
+      setendOfDate(endOfDateValue);
     }
-  }, [selectedTodo]);
+  }, [selectedToDo]);
 
   // 入力要素のChangeイベント
   const onChangeContents = (e: ChangeEvent<HTMLTextAreaElement>) =>
@@ -76,8 +77,7 @@ export const TaskModal: FC<Props> = memo((props: Props) => {
 
     if (checkErrorMessages !== '') {
       // チェック処理に問題がある場合
-      setMessage(checkErrorMessages);
-      onConfrimModalOpen();
+      showConfirmModal(checkErrorMessages);
       return;
     }
 
@@ -89,51 +89,26 @@ export const TaskModal: FC<Props> = memo((props: Props) => {
 
     axios
       .post('/api/TodoItems', todoItem)
-      .then((res) => {
-        setMessage('登録しました。');
-        onConfrimModalOpen();
-        initInputItems();
-        onClose();
-        // データ取得
-        getToDos(selectedOption);
-        console.log(res);
+      .then(() => {
+        showConfirmModal('登録しました。');
+        closeModel();
       })
       .catch(() => {
-        setMessage('登録できませんでした。');
-        onConfrimModalOpen();
+        showConfirmModal('登録できませんでした。');
       });
   };
 
   // 削除ボタンのクリックイベント
   const onClickDeleteButton = () => {
     axios
-      .delete(`/api/TodoItems/${selectedTodo!.id}`)
+      .delete(`/api/TodoItems/${selectedToDo!.id}`)
       .then(() => {
-        setMessage('削除しました。');
-        onConfrimModalOpen();
-        initInputItems();
-        onClose();
-        // データ取得
-        getToDos(selectedOption);
+        showConfirmModal('削除しました。');
+        closeModel();
       })
       .catch(() => {
-        setMessage('削除できませんでした。');
-        onConfrimModalOpen();
+        showConfirmModal('削除できませんでした。');
       });
-  };
-
-  // 項目のチェック処理
-  const checkInputItem = () => {
-    // 内容のチェック
-    if (contents === '') {
-      return 'Todoを入力してください';
-    }
-    // 完了予定日のチェック
-    if (expectedEndOfDate === '') {
-      return '完了予定日を入力してください';
-    }
-    // チェック処理に問題がない場合
-    return '';
   };
 
   // 更新ボタンのクリックイベント
@@ -143,32 +118,41 @@ export const TaskModal: FC<Props> = memo((props: Props) => {
 
     if (checkErrorMessages !== '') {
       // チェック処理に問題がある場合
-      setMessage(checkErrorMessages);
-      onConfrimModalOpen();
+      showConfirmModal(checkErrorMessages);
       return;
     }
 
+    const endOfDateValue = endOfDate === '' ? null : endOfDate;
     const todoItem: TodoItem = {
-      id: selectedTodo!.id,
+      id: selectedToDo!.id,
       Contents: contents,
       ExpectedEndOfDate: expectedEndOfDate,
-      EndOfDate: endOfDate,
+      EndOfDate: endOfDateValue,
     };
 
     axios
-      .put(`/api/TodoItems/${selectedTodo!.id}`, todoItem)
+      .put(`/api/TodoItems/${selectedToDo!.id}`, todoItem)
       .then(() => {
-        setMessage('更新しました。');
-        onConfrimModalOpen();
-        initInputItems();
-        onClose();
-        // データ取得
-        getToDos(selectedOption);
+        showConfirmModal('更新しました。');
+        closeModel();
       })
       .catch(() => {
-        setMessage('更新できませんでした。');
-        onConfrimModalOpen();
+        showConfirmModal('更新できませんでした。');
       });
+  };
+
+  // 項目のチェック処理
+  const checkInputItem = () => {
+    // 内容のチェック
+    if (contents === '') {
+      return 'ToDoを入力してください';
+    }
+    // 完了予定日のチェック
+    if (expectedEndOfDate === '') {
+      return '完了予定日を入力してください';
+    }
+    // チェック処理に問題がない場合
+    return '';
   };
 
   // 入力項目初期化
@@ -177,6 +161,19 @@ export const TaskModal: FC<Props> = memo((props: Props) => {
     setexpectedEndOfDate('');
     setendOfDate('');
   };
+
+  // 確認ダイアログを表示する処理
+  const showConfirmModal = (confirmMessage: string) => {
+    setMessage(confirmMessage);
+    onConfrimModalOpen();
+  }
+
+  // モーダルを閉じる際の処理
+  const closeModel = () => {
+    initInputItems();
+    onClose();
+    getToDos(selectedOption);
+  }
 
   return (
     <>
@@ -216,29 +213,23 @@ export const TaskModal: FC<Props> = memo((props: Props) => {
             </Stack>
           </ModalBody>
           <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onClose}>
+            <Button mr={3} onClick={onClose}>
               閉じる
             </Button>
             {updateFlag ? (
-              <Button variant="ghost" onClick={onClickDeleteButton}>
-                削除
-              </Button>
+              <PrimaryButton title="削除" onClick={onClickDeleteButton} />
             ) : (
               <></>
             )}
             {updateFlag ? (
-              <Button variant="ghost" onClick={onClickUpdateButton}>
-                更新
-              </Button>
+              <PrimaryButton title="更新" onClick={onClickUpdateButton} />
             ) : (
               <></>
             )}
             {updateFlag ? (
               <></>
             ) : (
-              <Button variant="ghost" onClick={onClickCreateButton}>
-                作成
-              </Button>
+              <PrimaryButton title="作成" onClick={onClickCreateButton} />
             )}
           </ModalFooter>
         </ModalContent>

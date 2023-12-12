@@ -1,14 +1,14 @@
 import axios from 'axios';
 
-import { useTodo } from './useTodo';
+import { useToDo } from './useToDo';
 
 // Todoを取得するカスタムフック
-export const useSelectTodos = () => {
-  const { setToDos } = useTodo();
+export const useSelectToDos = () => {
+  const { setToDos } = useToDo();
 
   const getToDos = (selectedOption: string) => {
     axios
-      .get('api/todoitems', { params: { selectedOption: selectedOption } })
+      .get('api/TodoItems', { params: { selectedOption: selectedOption } })
       .then((res) => {
         // 取得したデータをセット
         setToDos(res.data);

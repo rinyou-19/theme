@@ -9,35 +9,40 @@ import {
   TableContainer,
 } from '@chakra-ui/react';
 
-import { useTodo } from '../../hooks/useTodo';
+import { useToDo } from '../../hooks/useToDo';
 
 type Props = {
   headerItems: Array<string>;
   onOpen: () => void;
 };
 
-// Todo一覧を表示するコンポーネント
+// ToDo一覧を表示するコンポーネント
 export const DataTable: FC<Props> = memo((props: Props) => {
   // テーブルのヘッダー項目一覧
   const { headerItems, onOpen } = props;
-  // Todo一覧と更新フラグ
-  const { toDos, setUpdateFlag } = useTodo();
-  // 選択したTodo
-  const { setSelectedToDo } = useTodo();
+  // ToDo一覧と更新フラグ
+  const { toDos, setUpdateFlag } = useToDo();
+  // 選択したToDo
+  const { setSelectedToDo } = useToDo();
   const today = new Date();
   const date =
     today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+  // 表示する最大文字数
+  const maxTextLength = 5;
+
+  console.log("toDos");
+  console.log(toDos);
 
   // テーブルの行をクリックした際の処理
   const onClickTableRow = useCallback(
     (id: number) => {
       // ダイアログの表示要素を切り替える
       setUpdateFlag(true);
-      // 選択したTodoを設定する
+      // 選択したToDoを設定する
       if (toDos === null) return;
-      const tageetTodo = toDos.find((todo) => todo.id === id);
-      if (tageetTodo === undefined) return;
-      setSelectedToDo(tageetTodo);
+      const tageetToDo = toDos.find((toDo) => toDo.id === id);
+      if (tageetToDo === undefined) return;
+      setSelectedToDo(tageetToDo);
       // ダイアログを表示する
       onOpen();
     },
@@ -46,8 +51,8 @@ export const DataTable: FC<Props> = memo((props: Props) => {
 
   // ToDoの省略表示
   const truncateText = (text: string) => {
-    if (text.length > 5) {
-      return text.substring(0, 5) + '...';
+    if (text.length > maxTextLength) {
+      return text.substring(0, maxTextLength) + '...';
     }
     return text;
   };
@@ -55,7 +60,7 @@ export const DataTable: FC<Props> = memo((props: Props) => {
   return (
     <TableContainer height="calc(100vh - 229.2px)" overflowY="auto">
       <Table variant="simple">
-        <Thead>
+        <Thead position="sticky" top="0" bg="white" zIndex="sticky">
           <Tr>
             {headerItems.map((headerItem) => (
               <Th key={headerItem}>{headerItem}</Th>
@@ -67,7 +72,7 @@ export const DataTable: FC<Props> = memo((props: Props) => {
             <></>
           ) : (
             toDos.map((toDo) =>
-            toDo.expectedEndOfDate === '' && date > toDo.expectedEndOfDate ? (
+            toDo.endOfDate === null && toDo.expectedEndOfDate != null && date > toDo.expectedEndOfDate ? (
                 <Tr
                   key={toDo.id}
                   onClick={() => onClickTableRow(toDo.id as number)}

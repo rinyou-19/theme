@@ -10,5 +10,5 @@ type Props = {
 // ボタンのタイトルとクリック時の処理を受け取る
 export const PrimaryButton: FC<Props> = memo((props) => {
   const { title, onClick } = props;
-  return <Button onClick={onClick}>{title}</Button>;
+  return <Button mr={3} colorScheme="blue" onClick={onClick}>{title}</Button>;
 });

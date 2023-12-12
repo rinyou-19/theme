@@ -15,7 +15,7 @@ type Props = {
 // ラジオボタンのコンポーネント
 // ラジオボタンのタイトルとクリック時の処理と選択肢を受け取る
 export const RadioButton: FC<Props> = memo((props: Props) => {
-  // ラジオボタンのvalue
+
   const { radioButtonItems, selectedOption, onChange } = props;
 
   return (

@@ -1,7 +1,7 @@
 import { ChakraProvider, useDisclosure } from '@chakra-ui/react';
 import { useState } from 'react';
 
-import { TodoProvider } from './providers/TodoProvider';
+import { ToDoProvider } from './providers/ToDoProvider';
 import { Header } from './components/organism/Header';
 import { Query } from './components/organism/Query';
 import { DataTable } from './components/organism/DataTable';
@@ -9,7 +9,7 @@ import { Footer } from './components/organism/Footer';
 import { TaskModal } from './components/organism/TaskModal';
 
 export const App = () => {
-  // Todo一覧のヘッダー項目
+  // ToDo一覧のヘッダー項目
   const headerItems = ['id', '内容', '完了予定日', '完了日'];
   // ToDo登録モーダルの表示制御
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -19,7 +19,7 @@ export const App = () => {
   return (
     <>
       <ChakraProvider>
-        <TodoProvider>
+        <ToDoProvider>
           <Header />
           <Query
             selectedOption={selectedOption}
@@ -33,7 +33,7 @@ export const App = () => {
             selectedOption={selectedOption}
             setSelectedOption={setSelectedOption}
           />
-        </TodoProvider>
+        </ToDoProvider>
       </ChakraProvider>
     </>
   );

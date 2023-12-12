@@ -3,16 +3,17 @@ import { Card, CardBody, CardHeader, Flex, Heading } from '@chakra-ui/react';
 
 import { PrimaryButton } from '../atoms/PrimaryButton';
 import { RadioButton } from '../atoms/RadioButton';
-import { useSelectTodos } from '../../hooks/useSelectTodos';
+import { useSelectToDos } from '../../hooks/useSelectToDos';
 
 type Props = {
   selectedOption: string;
   setSelectedOption: (selectedOption: string) => void;
 };
 
+// 検索条件のコンポーネント
 export const Query: FC<Props> = memo((props: Props) => {
   const { selectedOption, setSelectedOption } = props;
-  const { getToDos } = useSelectTodos();
+  const { getToDos } = useSelectToDos();
   // 検索条件の項目
   const selectedItems = [
     { id: 11, title: 'すべて' },

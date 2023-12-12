@@ -1,10 +1,7 @@
-import { ChangeEvent, FC, memo, useEffect, useState } from 'react';
+import { FC, memo } from 'react';
 
 import {
   Button,
-  FormControl,
-  FormLabel,
-  Input,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -12,14 +9,7 @@ import {
   ModalFooter,
   ModalBody,
   ModalCloseButton,
-  Stack,
-  Textarea,
 } from '@chakra-ui/react';
-
-import axios from 'axios';
-
-import { useTodo } from '../../hooks/useTodo';
-import { useSelectTodos } from '../../hooks/useSelectTodos';
 
 type Props = {
   isConfirmOpen: boolean;
@@ -27,6 +17,8 @@ type Props = {
   message: string;
 };
 
+// 確認モーダルのコンポーネント
+// 表示するメッセージを受け取り、表示する
 export const ConfirmModal: FC<Props> = memo((props: Props) => {
   const { isConfirmOpen, onConfirmClose, message } = props;
 
@@ -41,7 +33,7 @@ export const ConfirmModal: FC<Props> = memo((props: Props) => {
             {message}
           </ModalBody>
           <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onConfirmClose}>
+            <Button mr={3} onClick={onConfirmClose}>
               閉じる
             </Button>
           </ModalFooter>
