@@ -27,15 +27,15 @@ namespace todo_app.Controllers
             if (selectedOption == unCompleted)
             {
                 // 検索条件:未完了
-                return await _context.TodoItem.Where(x => x.EndOfDate == null).ToListAsync();
+                return await _context.TodoItem.Where(x => x.EndOfDate == null).OrderBy(e => e.Id).ToListAsync();
             }
             if (selectedOption == completed)
             {
                 // 検索条件:完了済み
-                return await _context.TodoItem.Where(x => x.EndOfDate != null).ToListAsync();
+                return await _context.TodoItem.Where(x => x.EndOfDate != null).OrderBy(e => e.Id).ToListAsync();
             }
             // 検索条件:ずべて
-            return await _context.TodoItem.ToListAsync();
+            return await _context.TodoItem.OrderBy(e => e.Id).ToListAsync();
 
         }
 
