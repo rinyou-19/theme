@@ -13,8 +13,8 @@ namespace todo_app.Controllers
     public class TodoItemsController : ControllerBase
     {
         private readonly TodoContext _context;
-        private const string unConpleted = "未完了";
-        private const string conpleted = "未完了";
+        private const string unCompleted = "未完了";
+        private const string completed = "完了済み";
 
         public TodoItemsController(TodoContext context)
         {
@@ -24,14 +24,17 @@ namespace todo_app.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TodoItem>>> GetTodo(string selectedOption)
         {
-            if (selectedOption == unConpleted)
+            if (selectedOption == unCompleted)
             {
+                // 検索条件:未完了
                 return await _context.TodoItem.Where(x => x.EndOfDate == null).ToListAsync();
             }
-            if (selectedOption == conpleted)
+            if (selectedOption == completed)
             {
+                // 検索条件:完了済み
                 return await _context.TodoItem.Where(x => x.EndOfDate != null).ToListAsync();
             }
+            // 検索条件:ずべて
             return await _context.TodoItem.ToListAsync();
 
         }
@@ -48,7 +51,7 @@ namespace todo_app.Controllers
 
                     transaction.Commit();
 
-                    return Ok(); // 成功時のステータスコード
+                    return StatusCode(StatusCodes.Status200OK);
                 }
                 catch (Exception)
                 {
@@ -76,9 +79,9 @@ namespace todo_app.Controllers
 
                     transaction.Commit();
 
-                    return Ok(); // 成功時のステータスコード
+                    return StatusCode(StatusCodes.Status200OK);
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (Exception)
                 {
                     transaction.Rollback();
                     return StatusCode(StatusCodes.Status500InternalServerError);
@@ -100,21 +103,16 @@ namespace todo_app.Controllers
                 try
                 {
                     _context.TodoItem.Remove(todoItem);
-            await _context.SaveChangesAsync();
+                    await _context.SaveChangesAsync();
 
-                    return Ok(); // 成功時のステータスコード
+                    return StatusCode(StatusCodes.Status200OK);
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (Exception)
                 {
                     transaction.Rollback();
                     return StatusCode(StatusCodes.Status500InternalServerError);
                 }
             }
-        }
-
-        private bool TodoItemExists(int id)
-        {
-            return _context.TodoItem.Any(e => e.Id == id);
         }
     }
 }
