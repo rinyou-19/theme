@@ -27,4 +27,11 @@ app.MapControllers();
 
 app.MapFallbackToFile("index.html");
 
+// マイグレーション実行
+using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
+{
+    var context = serviceScope.ServiceProvider.GetService<TodoContext>();
+    context!.Database.Migrate();
+}
+
 app.Run();

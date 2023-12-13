@@ -2,6 +2,8 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using todo_app.Models;
 
 #nullable disable
@@ -31,7 +33,7 @@ namespace todo_app.Migrations
                     b.Property<string>("Contents")
                         .HasColumnType("text");
 
-                    b.Property<DateOnly>("EndOfDate")
+                    b.Property<DateOnly?>("EndOfDate")
                         .HasColumnType("date");
 
                     b.Property<DateOnly>("ExpectedEndOfDate")

@@ -1,4 +1,5 @@
 {
     "appService.preDeployTask": "publish-release",
-    "appService.deploySubpath": "todo-app/bin/Release/net7.0/publish"
+    "appService.deploySubpath": "todo-app\\bin\\Release\\net7.0\\publish",
+    "appService.defaultWebAppToDeploy": "/subscriptions/ec149517-ad66-4444-960e-f2a4e96be5ed/resourceGroups/kammorin-todo-app/providers/Microsoft.Web/sites/kamorin-todo-apps"
 }

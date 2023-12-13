@@ -20,7 +20,7 @@ namespace todo_app.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Contents = table.Column<string>(type: "text", nullable: true),
                     ExpectedEndOfDate = table.Column<DateOnly>(type: "date", nullable: false),
-                    EndOfDate = table.Column<DateOnly>(type: "date", nullable: false)
+                    EndOfDate = table.Column<DateOnly>(type: "date", nullable: true)
                 },
                 constraints: table =>
                 {

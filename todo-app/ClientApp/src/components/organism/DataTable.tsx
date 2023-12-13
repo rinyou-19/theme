@@ -28,10 +28,7 @@ export const DataTable: FC<Props> = memo((props: Props) => {
   const date =
     today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
   // 表示する最大文字数
-  const maxTextLength = 5;
-
-  console.log("toDos");
-  console.log(toDos);
+  const maxTextLength = 10;
 
   // テーブルの行をクリックした際の処理
   const onClickTableRow = useCallback(

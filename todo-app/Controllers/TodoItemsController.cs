@@ -101,6 +101,8 @@ namespace todo_app.Controllers
                     _context.TodoItem.Remove(todoItem);
                     await _context.SaveChangesAsync();
 
+                    transaction.Commit();
+
                     return StatusCode(StatusCodes.Status200OK);
                 }
                 catch (Exception)
